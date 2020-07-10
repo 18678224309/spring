@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/cache"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd"
+	   default-autowire="byType">
+
+
+	<bean id="testService" class="com.service.TestService" >
+		<property name="name" value="hahaha"></property>
+	</bean>
+
+	<bean id="testConfig" class="com.service.TestConfig">
+		<lookup-method name="test" bean="student"></lookup-method>
+	</bean>
+
+	<bean id="hahaha" class="com.service.HaImpl"></bean>
+
+	<bean id="teacher" class="com.service.Teacher"></bean>
+
+	<bean id="student" class="com.service.Student"></bean>
+
+
+</beans>
