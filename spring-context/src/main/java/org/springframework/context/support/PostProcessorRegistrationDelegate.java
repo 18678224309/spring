@@ -106,6 +106,19 @@ final class PostProcessorRegistrationDelegate {
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			registryProcessors.addAll(currentRegistryProcessors);
 
+			/**
+			 * 在这里执行 ConfigurationClassPostProcessor的 postProcessBeanDefinitionRegistry方法，
+			 * 完成了对 传入类，是否是lite 或 full的解析。
+			 * 	 *         1， @PropertySource
+			 * 	* 2， @ComponentScan -->会将扫描出来的BeanDefion 判断是否符合配置类，  是--->递归此方法解析。
+			 * * 3.  @Import -->会判断Import的类 是否实现ImportSelector，ImportBeanDefinitionRegistrar接口
+			 *		如果没有实现会吧import的类，作为普通配置类进行解析。 注意：@Import 并不会注册BD，所以不会添加到Spring容器中。
+			 *	 	如果此类实现了其他生命周期接口，需要添加到Spring容器中才能起作用.
+			 * * 4， @ImportResource
+			 * * 5， @Bean--> 在扫描到@Bean 的方法时，会将方法作为配置类的 BeanMethod存储，后续进行实例化时使用。
+			 * * 6， 实现的接口
+			 * * 7， 继承的父类
+			 */
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			currentRegistryProcessors.clear();
 
@@ -153,6 +166,16 @@ final class PostProcessorRegistrationDelegate {
 			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
 			/**
 			 * 执行直接实现了BeanFactoryPostProcessors接口 方法
+			 * 在这里主要实现了 ConfigurationClassPostProcessor#postProcessBeanFactory方法；
+			 * 主要的流程是判断配置类是否需要代理，这里使用Cglib进行。
+			 * 为了解决 在配置类中存在 @Bean方法相互引用的情况。
+			 * 如：a(),b() 两个方法； b方法中使用了 a()方法，如果不加@Configuation a方法会被实例化两次；
+			 * Spring对加了@Configuation的类 进行代理，主要的逻辑是在
+			 * org.springframework.context.annotation.ConfigurationClassEnhancer.BeanMethodInterceptor 类中；
+			 * 主要实现逻辑为：在调用 b方法时，会将正在执行的方法加入一个ThreadLocal变量中。
+			 * 在执行时会将当前执行的方法 与 正在执行的方法进行比较；
+			 * 如果一致：执行父类原始方法
+			 * 不一致：会到Spring容器中去取 ，取得到直接返回，取不到会再次实例化a方法；
 			 */
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);

@@ -3,7 +3,7 @@ package com.service;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Component;
 
-@Component
+
 public class TestFactoryBean implements FactoryBean<TestService> {
 	@Override
 	public TestService getObject() {

@@ -178,7 +178,12 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		Object singletonObject = this.singletonObjects.get(beanName);
-		//检测缓存中是否存在， 是不是在创建过程之中
+		/**
+		 * 这里是完成循环依赖的主要代码，
+		 * 如果缓存中不存在并且当前bean正在创建中。会去获取 对应的ObjectFactory，通过getObject 的那一段lambda表达式
+		 * 执行后置处理器。 如果存在Aop 将会在这里提前完成。
+		 * 总结：当存在循环依赖时，SpringAop将会在这里提前完成！
+		 */
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			//如果为空则锁定全局变量进行处理
 			synchronized (this.singletonObjects) {
@@ -189,6 +194,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				if (singletonObject == null && allowEarlyReference) {
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 					if (singletonFactory != null) {
+						System.err.println("存在循环依赖！！！！！！执行-----------");
 						//调用预先设定的getObject；
 						singletonObject = singletonFactory.getObject();
 						//存储在缓存中，earlySingletonObjects与singletonFactories互斥；

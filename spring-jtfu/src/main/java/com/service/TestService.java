@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 
 @PropertySource("classpath:spring.properties")
-@Component
 public class TestService {
 
 	@Value("${name}")

@@ -578,12 +578,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					//对bean再一次依赖引用，主要利用SmartInstantiationAware BeanPostProcess
 					//熟知的AOP就是在这里将advice动态的织入，如果没有则直接返回bean不做处理
 					/*() -> getEarlyBeanReference(beanName, mbd, bean)*/
-					new ObjectFactory<Object>() {
-						@Override
-						public Object getObject() throws BeansException {
-							return getEarlyBeanReference(beanName,mbd,bean);
-						}
-					});
+					() -> getEarlyBeanReference(beanName,mbd,bean));
 		}
 
 		// Initialize the bean instance.

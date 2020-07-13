@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.stereotype.Component;
 
-@Component
-public class A  implements BeanDefinitionRegistryPostProcessor, ImportBeanDefinitionRegistrar {
 
-	@Override
+public class A  /*implements BeanDefinitionRegistryPostProcessor, ImportBeanDefinitionRegistrar*/ {
+
+	/*@Override
 	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
 		System.err.println("postProcessBeanDefinitionRegistry2");
 	}
@@ -27,5 +27,5 @@ public class A  implements BeanDefinitionRegistryPostProcessor, ImportBeanDefini
 	@Override
 	public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 		System.err.println("registerBeanDefinitions3");
-	}
+	}*/
 }
